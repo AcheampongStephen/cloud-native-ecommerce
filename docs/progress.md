@@ -13,13 +13,13 @@
 
 ## Validation
 
-See verification.md for final test evidence and its limits. Workflow definitions
-exist locally; GitHub checks have not been run on a remote repository.
+See verification.md for local test evidence and its limits. The repository is
+published to GitHub; current remote check results are available under its Actions tab.
 
 ## Outstanding delivery milestones
 
 - Review application with the user and exercise incident recovery.
-- Choose a GitHub destination and configure branch protection.
+- Configure GitHub branch protection and required checks.
 - Independent release packaging, richer typed domain schemas, automatic pending
   reconciliation, rate limiting and external identity for public deployment.
 - Container/IaC security scans, SBOM artifacts, local Kubernetes/Helm, Terraform,

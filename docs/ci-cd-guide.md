@@ -20,9 +20,11 @@ flowchart LR
     Compose --> Review
 ```
 
-Workflow code is included; no GitHub repository has been created, pushed, or
-configured by this task. Branch protection and required checks must be enabled
-in the chosen repository. Actions are pinned to major versions; pin reviewed
+The repository is hosted at
+[AcheampongStephen/cloud-native-ecommerce](https://github.com/AcheampongStephen/cloud-native-ecommerce).
+See [Actions](https://github.com/AcheampongStephen/cloud-native-ecommerce/actions)
+for current remote check results. Branch protection and required checks still
+need configuration. Actions are pinned to major versions; pin reviewed
 commit SHAs for stronger supply-chain reproducibility before deployment.
 
 No ECR publication, AWS authentication, CD pipeline, Argo CD, SBOM publication,

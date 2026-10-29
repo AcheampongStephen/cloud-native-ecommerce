@@ -1,5 +1,8 @@
 # Common Goods — Cloud-Native Commerce
 
+[GitHub repository](https://github.com/AcheampongStephen/cloud-native-ecommerce) ·
+[CI checks](https://github.com/AcheampongStephen/cloud-native-ecommerce/actions)
+
 A complete local e-commerce demonstration: storefront, API gateway, identity,
 catalog, inventory, order coordination, simulated payments, and notifications.
 Built with Python/FastAPI, PostgreSQL, SQLAlchemy/Alembic, and RabbitMQ.

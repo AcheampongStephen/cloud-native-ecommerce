@@ -31,7 +31,7 @@ RabbitMQ; native mode uses the explicitly different local relay.
 
 One non-failing deprecation warning remains: the updated Starlette TestClient
 supports httpx for now but recommends its newer client backend. No warning is
-suppressed. GitHub Actions has not run on a remote repository; its workflow is
-provided locally. No browser-authentication, performance/load, external security,
+suppressed. These local checks preceded GitHub publication; see the repository's
+Actions tab for current remote workflow results. No browser-authentication, performance/load, external security,
 container vulnerability, cloud, Kubernetes or full backup-restore validation is
 claimed. See security.md and progress.md for outstanding work.
