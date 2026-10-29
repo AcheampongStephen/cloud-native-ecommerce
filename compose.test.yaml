@@ -1,0 +1,22 @@
+name: common-goods-tests
+services:
+  postgres-test:
+    image: postgres:17
+    environment:
+      # Isolated test-only network; no host port and no persistent volume.
+      POSTGRES_HOST_AUTH_METHOD: trust
+    tmpfs: [/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD, pg_isready, -U, postgres]
+      interval: 3s
+      retries: 20
+  tests:
+    image: common-goods:local
+    working_dir: /workspace
+    volumes: [.:/workspace]
+    environment:
+      TEST_POSTGRES_URL: postgresql+psycopg://postgres@postgres-test/postgres
+    depends_on:
+      postgres-test: { condition: service_healthy }
+    command: [python, -m, pytest, -q, -p, no:cacheprovider]
+    healthcheck: { disable: true }

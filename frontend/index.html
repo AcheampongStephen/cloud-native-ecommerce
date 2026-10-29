@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#153e35" />
+    <title>Common Goods · Thoughtfully everyday</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <div class="announcement">
+      A small collection. A better everyday.
+      <span>Local demo store · Simulated payments only</span>
+    </div>
+    <header>
+      <a class="brand" href="/" aria-label="Common Goods home"
+        ><span class="mark">c/g</span> common goods<span class="brand-dot"
+          >®</span
+        ></a
+      >
+      <nav aria-label="Main navigation">
+        <button id="shop-nav" class="nav-active">Shop all</button
+        ><button id="orders-nav">My orders</button>
+      </nav>
+      <div class="header-actions">
+        <button id="account-button">Sign in</button
+        ><button class="bag-button" id="cart-button">
+          Bag <span id="cart-count">0</span>
+        </button>
+      </div>
+    </header>
+    <main>
+      <section id="shop-view">
+        <div class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">THE EVERYDAY EDIT / COLLECTION 01</p>
+            <h1>Good things.<br />Better days.</h1>
+            <p>
+              Considered essentials for your desk, your downtime,<br
+                class="desktop"
+              />
+              and everything in between.
+            </p>
+            <a class="cta" href="#collection"
+              >Explore the collection <span>↗</span></a
+            >
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="orbit orbit-one"></div>
+            <div class="orbit orbit-two"></div>
+            <div class="art-disc"><span>🎧</span></div>
+            <div class="art-caption">
+              <span>LESS NOISE.<br />MORE POSSIBILITY.</span
+              ><span>01 — 06</span>
+            </div>
+            <div class="art-label">THE SOUND OF<br />YOUR OWN SPACE.</div>
+          </div>
+        </div>
+        <div class="benefits">
+          <span>↗ Thoughtfully selected</span><span>◎ Made for everyday</span
+          ><span>◇ Simple by design</span>
+        </div>
+        <section id="collection" class="collection">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">FIND YOUR EVERYDAY FAVORITE</p>
+              <h2>The collection<span id="product-total"></span></h2>
+            </div>
+            <label class="search-label"
+              ><span class="sr-only">Search products</span
+              ><input
+                id="search"
+                type="search"
+                placeholder="Search the collection…"
+            /></label>
+          </div>
+          <div class="filter-row" role="group" aria-label="Product categories">
+            <button class="filter active" data-category="">All goods</button
+            ><button class="filter" data-category="Workspace">Workspace</button
+            ><button class="filter" data-category="Audio">Audio</button
+            ><button class="filter" data-category="Everyday">Everyday</button>
+          </div>
+          <div id="products" class="product-grid" aria-live="polite">
+            <p>Loading the collection…</p>
+          </div>
+        </section>
+        <section class="closing">
+          <p class="eyebrow">FEWER THINGS. MORE INTENTION.</p>
+          <h2>A little upgrade<br />to your everyday.</h2>
+          <p>Useful. Considered. Just right.</p>
+          <span>COMMON GOODS / EST. 2026</span>
+        </section>
+      </section>
+      <section id="orders-view" class="orders-page" hidden>
+        <p class="eyebrow">YOUR COMMON GOODS</p>
+        <h1>Order history.</h1>
+        <p>
+          Your purchases and local delivery notifications, all in one place.
+        </p>
+        <button id="refresh-orders" class="secondary">Refresh orders</button>
+        <div id="orders-list"></div>
+        <h2>Your inbox</h2>
+        <div id="notifications-list"></div>
+      </section>
+    </main>
+    <footer>
+      <a class="brand" href="/">common goods®</a>
+      <p>A local cloud-native commerce demonstration.</p>
+      <span>No real payments. Just good engineering.</span>
+    </footer>
+    <dialog id="auth-dialog">
+      <form id="auth-form">
+        <div class="dialog-top">
+          <span class="eyebrow">WELCOME TO COMMON GOODS</span
+          ><button
+            type="button"
+            class="close"
+            data-close="auth-dialog"
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+        <h2 id="auth-title">Welcome back.</h2>
+        <p id="auth-description">Sign in to keep your everyday in order.</p>
+        <label
+          >Email<input
+            id="email"
+            type="email"
+            autocomplete="email"
+            required
+            maxlength="254" /></label
+        ><label
+          >Password<input
+            id="password"
+            type="password"
+            autocomplete="current-password"
+            minlength="12"
+            maxlength="128"
+            required
+        /></label>
+        <p class="hint">
+          Use at least 12 characters. This is a local demo account.
+        </p>
+        <p id="auth-error" class="error" role="alert"></p>
+        <button type="submit" id="auth-submit" class="primary">Sign in</button
+        ><button type="button" id="auth-toggle" class="text-button">
+          New here? Create an account
+        </button>
+      </form>
+    </dialog>
+    <dialog id="cart-dialog">
+      <div class="dialog-top">
+        <span class="eyebrow">YOUR EVERYDAY PICKS</span
+        ><button class="close" data-close="cart-dialog" aria-label="Close bag">
+          ×
+        </button>
+      </div>
+      <h2>Your bag.</h2>
+      <div id="cart-items"></div>
+      <div class="total-line">
+        <span>Subtotal</span><strong id="cart-total">$0.00</strong>
+      </div>
+      <p class="hint">Demo USD pricing. No taxes or shipping charged.</p>
+      <label
+        >Simulated payment<select id="payment-method">
+          <option value="approve">Approve payment</option>
+          <option value="decline">Decline payment (test recovery)</option>
+        </select></label
+      >
+      <p id="cart-error" class="error" role="alert"></p>
+      <button id="checkout" class="primary">Place demo order ↗</button>
+      <p class="hint">Never enter real payment details. None are requested.</p>
+    </dialog>
+    <div id="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>

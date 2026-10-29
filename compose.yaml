@@ -1,0 +1,137 @@
+name: common-goods
+x-app: &app
+  image: common-goods:local
+  restart: unless-stopped
+  init: true
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+  depends_on:
+    postgres: { condition: service_healthy }
+x-env: &env
+  JWT_SECRET: ${JWT_SECRET:?Run python -m commerce.manage init}
+  INTERNAL_SECRET: ${INTERNAL_SECRET:?Generate .env first}
+  IDENTITY_URL: http://identity:8000
+  PRODUCT_URL: http://product:8000
+  INVENTORY_URL: http://inventory:8000
+  PAYMENT_URL: http://payment:8000
+  ORDER_URL: http://order:8000
+  NOTIFICATION_URL: http://notification:8000
+  RABBIT_URL: amqp://commerce:${RABBIT_PASSWORD:?Generate .env first}@rabbitmq:5672/%2F
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: platform_admin
+      POSTGRES_DB: platform_admin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Generate .env first}
+      IDENTITY_DB_PASSWORD: ${IDENTITY_DB_PASSWORD:?Generate .env first}
+      PRODUCT_DB_PASSWORD: ${PRODUCT_DB_PASSWORD:?Generate .env first}
+      INVENTORY_DB_PASSWORD: ${INVENTORY_DB_PASSWORD:?Generate .env first}
+      PAYMENT_DB_PASSWORD: ${PAYMENT_DB_PASSWORD:?Generate .env first}
+      ORDER_DB_PASSWORD: ${ORDER_DB_PASSWORD:?Generate .env first}
+      NOTIFICATION_DB_PASSWORD: ${NOTIFICATION_DB_PASSWORD:?Generate .env first}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/init-databases.sh:/docker-entrypoint-initdb.d/01-services.sh:ro
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U platform_admin -d platform_admin]
+      interval: 5s
+      retries: 20
+    restart: unless-stopped
+  rabbitmq:
+    image: rabbitmq:4-management
+    environment:
+      RABBITMQ_DEFAULT_USER: commerce
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_PASSWORD:?Generate .env first}
+    volumes: [rabbitdata:/var/lib/rabbitmq]
+    healthcheck:
+      test: [CMD, rabbitmq-diagnostics, -q, ping]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+  identity:
+    <<: *app
+    environment:
+      <<: *env
+      SERVICE: identity
+      DATABASE_URL: postgresql+psycopg://identity:${IDENTITY_DB_PASSWORD}@postgres/identity
+  product:
+    <<: *app
+    environment:
+      <<: *env
+      SERVICE: product
+      DATABASE_URL: postgresql+psycopg://product:${PRODUCT_DB_PASSWORD}@postgres/product
+  inventory:
+    <<: *app
+    environment:
+      <<: *env
+      SERVICE: inventory
+      DATABASE_URL: postgresql+psycopg://inventory:${INVENTORY_DB_PASSWORD}@postgres/inventory
+  payment:
+    <<: *app
+    environment:
+      <<: *env
+      SERVICE: payment
+      DATABASE_URL: postgresql+psycopg://payment:${PAYMENT_DB_PASSWORD}@postgres/payment
+  order:
+    <<: *app
+    environment:
+      <<: *env
+      SERVICE: order
+      DATABASE_URL: postgresql+psycopg://order:${ORDER_DB_PASSWORD}@postgres/order
+  notification:
+    <<: *app
+    environment:
+      <<: *env
+      SERVICE: notification
+      DATABASE_URL: postgresql+psycopg://notification:${NOTIFICATION_DB_PASSWORD}@postgres/notification
+  gateway:
+    <<: *app
+    build: .
+    ports: [127.0.0.1:8007:8000]
+    depends_on:
+      identity: { condition: service_healthy }
+      product: { condition: service_healthy }
+      inventory: { condition: service_healthy }
+      payment: { condition: service_healthy }
+      order: { condition: service_healthy }
+      notification: { condition: service_healthy }
+    environment:
+      <<: *env
+      SERVICE: gateway
+  order-worker:
+    <<: *app
+    command: [python, -m, commerce.worker]
+    healthcheck:
+      test: [CMD, python, -m, commerce.worker, health]
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    depends_on:
+      order: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+    environment:
+      <<: *env
+      SERVICE: order
+      DATABASE_URL: postgresql+psycopg://order:${ORDER_DB_PASSWORD}@postgres/order
+  notification-worker:
+    <<: *app
+    command: [python, -m, commerce.worker]
+    healthcheck:
+      test: [CMD, python, -m, commerce.worker, health]
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    depends_on:
+      notification: { condition: service_healthy }
+      rabbitmq: { condition: service_healthy }
+    environment:
+      <<: *env
+      SERVICE: notification
+      DATABASE_URL: postgresql+psycopg://notification:${NOTIFICATION_DB_PASSWORD}@postgres/notification
+volumes:
+  pgdata:
+  rabbitdata:
